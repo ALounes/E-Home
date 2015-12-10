@@ -16,10 +16,10 @@
 #define SCL P0_28
 #define DHT11_PIN P2_12
 #define TIME_LED  500
-#define WAIT_TEMPERATURE 9000
-#define WAIT_PRESSION    9000
+#define WAIT_TEMPERATURE 3000
+#define WAIT_PRESSION    3000
 #define WAIT_PRESENCE    200
-#define PERIODE_BLE      15000
+#define PERIODE_BLE      5000
 #define TX P4_28
 #define RX P4_29
 
@@ -280,19 +280,19 @@ void thread_presence(void const *name) {
 void bleCallBack(void const *name) {
     printf("%s\n\r", (const char*)name);
     
-    printf(" tmp 01      : %3d \n",inf.temperature_01);
-    printf(" tmp 02      : %3d \n",inf.temperature_02);
-    printf(" humidite    : %3d \n",inf.humidite);
-    printf(" pression    : %6ld \n",inf.pression);
-    printf(" luminosite  : %3d \n",inf.luminosite);
-    printf(" Mouvement   : %1d \n",inf.mouvement);
+    printf(" tmp 01      : %d \n",inf.temperature_01);
+    printf(" tmp 02      : %d \n",inf.temperature_02);
+    printf(" humidite    : %d \n",inf.humidite);
+    printf(" pression    : %d \n",inf.pression);
+    printf(" luminosite  : %d \n",inf.luminosite);
+    printf(" Mouvement   : %d \n",inf.mouvement);
         
-    bluetooth.printf("%3d%3d%3d%6ld%3d%1d"  ,inf.temperature_01
-                                            ,inf.humidite
-                                            ,inf.temperature_02
-                                            ,inf.pression
-                                            ,inf.luminosite
-                                            ,inf.mouvement);
+    bluetooth.printf("T1 %d H %d T2 %d P %ld L %d M %d" ,inf.temperature_01
+                                                        ,inf.humidite
+                                                        ,inf.temperature_02
+                                                        ,inf.pression
+                                                        ,inf.luminosite
+                                                        ,inf.mouvement);
 }
 
 /*************************************************************************************/
