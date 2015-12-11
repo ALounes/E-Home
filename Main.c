@@ -16,10 +16,10 @@
 #define SCL P0_28
 #define DHT11_PIN P2_12
 #define TIME_LED  500
-#define WAIT_TEMPERATURE 9000
-#define WAIT_PRESSION    9000
+#define WAIT_TEMPERATURE 3000
+#define WAIT_PRESSION    3000
 #define WAIT_PRESENCE    200
-#define PERIODE_BLE      15000
+#define PERIODE_BLE      5000
 #define TX P4_28
 #define RX P4_29
 
@@ -47,8 +47,12 @@ void potAndPwm();
  
 Semaphore two_slots(1);
 bool intFlag = false;
-InterruptIn interrupt(P0_23);
 Serial bluetooth(P4_28, P4_29);
+Ticker timer;
+Serial pc(USBTX, USBRX);
+apds9960 sensor(P0_27,P0_28);
+InterruptIn interrupt(P0_24);
+DigitalOut myled(LED1);
 
 typedef struct {
     int  temperature_01;
@@ -70,7 +74,7 @@ Informations inf = {0,0,0,0,0,0};
 int main (void) {
     Thread t1(thread_temperature, (void *)"Thread temperature");
     Thread t2(thread_pression   , (void *)"Thread pression");
-//  Thread t3(thread_presence   , (void *)"Thread presence");
+    Thread t3(thread_presence   , (void *)"Thread presence");
     Thread t4(thread_led, (void *)"Thread Led");
     
     RtosTimer BleSend(bleCallBack, osTimerPeriodic, (void *)"Ble emission");
@@ -180,61 +184,71 @@ void thread_pression(void const *name) {
 /*************************************************************************************/
   
 void trigger() {    
-    printf("triggered\n\r");
+//    pc.printf("triggered\n\r");
     intFlag = true;
 }
 
 void printGesture(int gesture) {
     switch ( gesture ) {
         case DIR_UP:
-            printf("UP\n\r");
+            pc.printf("UP\n\r");
             break;
         case DIR_DOWN:
-            printf("DOWN\n\r");
+            pc.printf("DOWN\n\r");
             break;
         case DIR_LEFT:
-            printf("LEFT\n\r");
+            pc.printf("LEFT\n\r");
             break;
         case DIR_RIGHT:
-            printf("RIGHT\n\r");
+            pc.printf("RIGHT\n\r");
             break;
         case DIR_NEAR:
-            printf("NEAR\n\r");
+            pc.printf("NEAR\n\r");
             break;
         case DIR_FAR:
-            printf("FAR\n\r");
+            pc.printf("FAR\n\r");
             break;
         default:
-            printf("NONE\n\r");
+            pc.printf("NONE\n\r");
     }
 }
 
-int getGesture(apds9960 *sensor) {
- 
-    if(sensor->isGestureAvailable()) {
-        printf("Gesture Available!\n\r");
+int getGesture() {
+
+    if(sensor.isGestureAvailable()) {
+        pc.printf("Gesture Available!\n\r");
         // Process it.
-        switch ( sensor->readGesture() ) {
-            case DIR_UP: return DIR_UP;
-            case DIR_DOWN: return DIR_DOWN;
-            case DIR_LEFT: return DIR_LEFT;
-            case DIR_RIGHT: return DIR_RIGHT;
-            case DIR_NEAR: return DIR_NEAR;
-            case DIR_FAR: return DIR_FAR;
-            default: return DIR_NONE;
+        
+        switch ( sensor.readGesture() ) {
+            case DIR_UP   :
+                    inf.mouvement = 5; 
+                    return 5;
+            case DIR_DOWN : 
+                    inf.mouvement = 4; 
+                    return 4;
+            case DIR_LEFT : 
+                    inf.mouvement = 3; 
+                    return 3;
+            case DIR_RIGHT: 
+                    inf.mouvement = 2; 
+                    return 2;
+            case DIR_NEAR : 
+                    inf.mouvement = 6; 
+                    return 6;
+            case DIR_FAR  : 
+                    inf.mouvement = 7; 
+                    return 7;
+            default: 
+                    inf.mouvement = 1; 
+                    return 1;
         }
     }
     return DIR_NONE;
-}  
+    //return 0;
+}
   
 void thread_presence(void const *name) {
     
-    Ticker timer;
-    Serial pc(USBTX, USBRX);
-    apds9960 sensor(P0_27,P0_28);
-    DigitalOut myled(LED1);
-
-    myled = 0;
     printf("%s\n\r", (const char*)name);
     
     two_slots.wait();
@@ -252,22 +266,22 @@ void thread_presence(void const *name) {
     printf("Gesture sensor is now running\n\r");
     two_slots.release();
  
-    interrupt.fall(trigger);
-    
-    while (true) {
-        printf("boucle \n\r");
-        
+    interrupt.fall(&trigger);
+           
+    while(1) {
         // when interrupt trigerred, flag is set.
-        if(true){//intFlag) {
+        if(intFlag) {
             
             two_slots.wait();
-            printGesture(getGesture(&sensor));
+            printGesture(getGesture());
             two_slots.release();
             
             // Clean interrupt handler flag.
             intFlag = false;
         }
-        Thread::wait(WAIT_PRESENCE);
+            
+        // Do somethings else
+        wait_ms(100);
     }
 }
 
@@ -293,6 +307,8 @@ void bleCallBack(void const *name) {
                                             ,inf.pression
                                             ,inf.luminosite
                                             ,inf.mouvement);
+                                            
+    inf.mouvement = 0;
 }
 
 /*************************************************************************************/
