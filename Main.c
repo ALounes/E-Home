@@ -115,38 +115,37 @@ void thread_temperature(void const *name) {
 /*************************************************************************************/
 
 void thread_led(void const *name) {
-    DigitalOut tab[] = {P2_13, P0_1, P0_0};
+    DigitalOut tab[] = {PIN_MUX_P0, PIN_MUX_P1, PIN_MUX_P2};
     
     while (true) {
         printf("%s\n\r", (const char*)name);
         
         //printf("000 \n\r");
-        tab[0] = 0; tab[1] = 0; tab[2] = 0;
+        tab[0] = LED_OFF; tab[1] = LED_OFF; tab[2] = LED_OFF;
         Thread::wait(TIME_LED );
           
         //printf("100 \n\r");       
-        tab[0] = 1; tab[1] = 0; tab[2] = 0;
+        tab[0] = LED_ON; tab[1] = LED_OFF; tab[2] = LED_OFF;
         Thread::wait(TIME_LED );
 
         //printf("010 \n\r"); 
-        tab[0] = 0; tab[1] = 1; tab[2] = 0;
+        tab[0] = LED_OFF; tab[1] = LED_ON; tab[2] = LED_OFF;
         Thread::wait(TIME_LED );
  
         //printf("110 \n\r"); 
-        tab[0] = 1; tab[1] = 1; tab[2] = 0;
-
+        tab[0] = LED_ON; tab[1] = LED_ON; tab[2] = LED_OFF;
         Thread::wait(TIME_LED );
      
         //printf("001 \n\r"); 
-        tab[0] = 0; tab[1] = 0; tab[2] = 1;
+        tab[0] = LED_OFF; tab[1] = LED_OFF; tab[2] = LED_ON;
         Thread::wait(TIME_LED );
    
         //printf("101 \n\r"); 
-        tab[0] = 1; tab[1] = 0; tab[2] = 1;
+        tab[0] = LED_ON; tab[1] = LED_OFF; tab[2] = LED_ON;
         Thread::wait(TIME_LED );
           
         //printf("011 \n\r"); 
-        tab[0] = 0; tab[1] = 1; tab[2] = 1;
+        tab[0] = LED_OFF; tab[1] = LED_ON; tab[2] = LED_ON;
         Thread::wait(TIME_LED );
     }
 }
@@ -158,10 +157,10 @@ void thread_led(void const *name) {
 /*************************************************************************************/
 
 void thread_pression(void const *name) {
-    long temp =0;
-    long pressure=0;
-    int error =0;
-    BMP180 bmp180(SDA, SCL);
+    long temp 		= 0;
+    long pressure	= 0;
+    int  error 	= 0;
+    BMP180 bmp180(PIN_PRESURE_SENSOR_SDA, PIN_PRESURE_SENSOR_SCL);
     
     while (true) {
         two_slots.wait();
@@ -174,7 +173,8 @@ void thread_pression(void const *name) {
         printf("Pressure is %ld\r\n",pressure);
         printf("Error is %d\r\n\r\n",error);
         two_slots.release();
-        Thread::wait(WAIT_PRESSION);
+
+        Thread::wait(TIME_WAIT_MS_PRESURE_SENSOR);
     } 
 }
 
@@ -216,23 +216,24 @@ void printGesture(int gesture) {
 
 int getGesture() {
 
-    if(sensor.isGestureAvailable()) {
-        pc.printf("Gesture Available!\n\r");
+	if(sensor.isGestureAvailable()) {
+			pc.printf("Gesture Available!\n\r");
         // Process it.
         
-        switch ( sensor.readGesture() ) {
-            case DIR_UP   :
-                    inf.mouvement = 5; 
-                    return 5;
-            case DIR_DOWN : 
-                    inf.mouvement = 4; 
-                    return 4;
-            case DIR_LEFT : 
-                    inf.mouvement = 3; 
-                    return 3;
+			switch ( sensor.readGesture() ) {
+
             case DIR_RIGHT: 
                     inf.mouvement = 2; 
                     return 2;
+            case DIR_LEFT : 
+                    inf.mouvement = 3; 
+                    return 3;
+            case DIR_DOWN : 
+                    inf.mouvement = 4; 
+                    return 4;
+            case DIR_UP   :
+                    inf.mouvement = 5; 
+                    return 5;
             case DIR_NEAR : 
                     inf.mouvement = 6; 
                     return 6;
@@ -248,6 +249,7 @@ int getGesture() {
     //return 0;
 }
   
+
 void thread_presence(void const *name) {
     
     printf("%s\n\r", (const char*)name);
@@ -255,14 +257,14 @@ void thread_presence(void const *name) {
     two_slots.wait();
     while(!sensor.ginit(pc)){
         printf("Something went wrong during APDS-9960 init\n\r");
-        Thread::wait(20);
+        Thread::wait(TIME_WAIT_MS_INITIALISATION_FAILURE);
     }
     printf("APDS-9960 initialization complete\n\r");
         
     // Start running the APDS-9960 gesture sensor engine    
     while(!sensor.enableGestureSensor(true)){
         printf("Something went wrong during gesture sensor init!\n\r");
-        Thread::wait(20);
+        Thread::wait(TIME_WAIT_MS_INITIALISATION_FAILURE);
     }
     printf("Gesture sensor is now running\n\r");
     two_slots.release();
@@ -282,7 +284,7 @@ void thread_presence(void const *name) {
         }
             
         // Do somethings else
-        wait_ms(100);
+        wait_ms(TIME_WAIT_MS_MOUVEMENT_SENSOR);
     }
 }
 
