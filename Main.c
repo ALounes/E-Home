@@ -5,6 +5,12 @@
 /*************************************************************************************/
 /*************************************************************************************/
 
+/*************************************************************************************/
+/*************************************************************************************/
+/*                            BIBLIOTHEQUES ET HEADER                                */
+/*************************************************************************************/
+/*************************************************************************************/ 
+
 #include "mbed.h"
 #include "rtos.h"
 #include "DHT11.h"
@@ -12,59 +18,29 @@
 #include "SoftPWM.h"
 #include "apds9960.h"
 #include "configuration.h"
-
-#define SDA P0_27
-#define SCL P0_28
-#define DHT11_PIN P2_12
-#define TIME_LED  500
-#define WAIT_TEMPERATURE 3000
-#define WAIT_PRESSION    3000
-#define WAIT_PRESENCE    200
-#define PERIODE_BLE      5000
-#define TX P4_28
-#define RX P4_29
-
-/*************************************************************************************/
-/*************************************************************************************/
-/*                           PROTOTYPAGE DE FONCTIONS                                */
-/*************************************************************************************/
-/*************************************************************************************/ 
-
-void thread_temperature(void const *name);
-void thread_led(void const *name); 
-void thread_pression(void const *name);  
-void thread_presence(void const *name);
-void trigger();
-void printGesture(int gesture); 
-int  getGesture(apds9960 *sensor); 
-void bleCallBack(void const *name); 
-void potAndPwm();
  
 /*************************************************************************************/
 /*************************************************************************************/
 /*                             VARIABLES GLOBALES                                    */
 /*************************************************************************************/
 /*************************************************************************************/ 
- 
-Semaphore two_slots(1);
-bool intFlag = false;
-Serial bluetooth(P4_28, P4_29);
-Ticker timer;
-Serial pc(USBTX, USBRX);
-apds9960 sensor(P0_27,P0_28);
-InterruptIn interrupt(P0_24);
-DigitalOut myled(LED1);
 
+apds9960 		sensor(PIN_MOUVEMENT_SENSOR_SDA,PIN_MOUVEMENT_SENSOR_SCL);
+InterruptIn 	interrupt(PIN_MOUVEMENT_SENSOR_INTERRUPTION);
+Serial 			bluetooth(PIN_BLE_TX, PIN_BLE_RX);
+Serial 			pc(USBTX, USBRX);
+Semaphore 		two_slots(1);
+Ticker 			timer;
 
-
-Informations inf = {0,0,0,0,0,0};
+Informations 	inf = {0,0,0,0,0,0};
+bool 				intFlag = false;
 
 /*************************************************************************************/
 /*************************************************************************************/
 /*                                FONCTION MAIN                                      */
 /*************************************************************************************/
 /*************************************************************************************/
-  
+
 int main (void) {
 
     Thread t1(thread_temperature, (void *)"Thread temperature");
@@ -73,7 +49,7 @@ int main (void) {
     Thread t4(thread_led, (void *)"Thread Led");
     
     RtosTimer BleSend(bleCallBack, osTimerPeriodic, (void *)"Ble emission");
-    BleSend.start(PERIODE_BLE);
+    BleSend.start(TIME_MS_PERIODE_BLE);
     
     potAndPwm();
 }
