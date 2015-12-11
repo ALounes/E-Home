@@ -6,11 +6,12 @@
 /*************************************************************************************/
 
 #include "mbed.h"
-#include "BMP180.h"
 #include "rtos.h"
 #include "DHT11.h"
-#include "apds9960.h"
+#include "BMP180.h"
 #include "SoftPWM.h"
+#include "apds9960.h"
+#include "configuration.h"
 
 #define SDA P0_27
 #define SCL P0_28
@@ -319,18 +320,18 @@ void bleCallBack(void const *name) {
 
 void potAndPwm()
 {
-    AnalogIn pot(P1_31);
-    SoftPWM led = P2_5;
+    AnalogIn pot(PIN_POTENTIOMETRE);
+    SoftPWM led = PIN_PWM_LED;
     
-    led.period_ms( 1 );
+    led.period_ms(PWM_PERIODE_MS);
     
     while (true)   {
-        if(pot.read() < 0.05){
-            led = 0;
+        if(pot.read() < PWM_VALUE_MIN){
+            led = PWM_LED_OFF;
             inf.luminosite = 0;
         }
-        else if (pot.read()> 0.95){
-            led = 1;
+        else if (pot.read()> PWM_VALUE_MAX){
+            led = PWM_LED_ON;
             inf.luminosite = 100;
         }
         else {
