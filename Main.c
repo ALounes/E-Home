@@ -25,15 +25,15 @@
 /*************************************************************************************/
 /*************************************************************************************/ 
 
-apds9960 		sensor(PIN_MOUVEMENT_SENSOR_SDA,PIN_MOUVEMENT_SENSOR_SCL);
-InterruptIn 	interrupt(PIN_MOUVEMENT_SENSOR_INTERRUPTION);
-Serial 			bluetooth(PIN_BLE_TX, PIN_BLE_RX);
-Serial 			pc(USBTX, USBRX);
-Semaphore 		two_slots(1);
-Ticker 			timer;
+apds9960        sensor(PIN_MOUVEMENT_SENSOR_SDA,PIN_MOUVEMENT_SENSOR_SCL);
+InterruptIn     interrupt(PIN_MOUVEMENT_SENSOR_INTERRUPTION);
+Serial          bluetooth(PIN_BLE_TX, PIN_BLE_RX);
+Serial          pc(USBTX, USBRX);
+Semaphore       two_slots(1);
+Ticker          timer;
 
-Informations 	inf = {0,0,0,0,0,0};
-bool 				intFlag = false;
+Informations    inf = {0,0,0,0,0,0};
+bool                intFlag = false;
 
 /*************************************************************************************/
 /*************************************************************************************/
@@ -96,31 +96,31 @@ void thread_led(void const *name) {
         
         //printf("000 \n\r");
         tab[0] = LED_OFF; tab[1] = LED_OFF; tab[2] = LED_OFF;
-        Thread::wait(TIME_LED );
+        Thread::wait( TIME_WAIT_BLINK_LED );
           
         //printf("100 \n\r");       
         tab[0] = LED_ON; tab[1] = LED_OFF; tab[2] = LED_OFF;
-        Thread::wait(TIME_LED );
+        Thread::wait( TIME_WAIT_BLINK_LED );
 
         //printf("010 \n\r"); 
         tab[0] = LED_OFF; tab[1] = LED_ON; tab[2] = LED_OFF;
-        Thread::wait(TIME_LED );
+        Thread::wait( TIME_WAIT_BLINK_LED );
  
         //printf("110 \n\r"); 
         tab[0] = LED_ON; tab[1] = LED_ON; tab[2] = LED_OFF;
-        Thread::wait(TIME_LED );
+        Thread::wait( TIME_WAIT_BLINK_LED );
      
         //printf("001 \n\r"); 
         tab[0] = LED_OFF; tab[1] = LED_OFF; tab[2] = LED_ON;
-        Thread::wait(TIME_LED );
+        Thread::wait( TIME_WAIT_BLINK_LED );
    
         //printf("101 \n\r"); 
         tab[0] = LED_ON; tab[1] = LED_OFF; tab[2] = LED_ON;
-        Thread::wait(TIME_LED );
+        Thread::wait( TIME_WAIT_BLINK_LED );
           
         //printf("011 \n\r"); 
         tab[0] = LED_OFF; tab[1] = LED_ON; tab[2] = LED_ON;
-        Thread::wait(TIME_LED );
+        Thread::wait( TIME_WAIT_BLINK_LED );
     }
 }
 
@@ -131,9 +131,9 @@ void thread_led(void const *name) {
 /*************************************************************************************/
 
 void thread_pression(void const *name) {
-    long temp 		= 0;
-    long pressure	= 0;
-    int  error 	= 0;
+    long temp       = 0;
+    long pressure   = 0;
+    int  error  = 0;
     BMP180 bmp180(PIN_PRESURE_SENSOR_SDA, PIN_PRESURE_SENSOR_SCL);
     
     while (true) {
@@ -190,11 +190,11 @@ void printGesture(int gesture) {
 
 int getGesture() {
 
-	if(sensor.isGestureAvailable()) {
-			pc.printf("Gesture Available!\n\r");
+    if(sensor.isGestureAvailable()) {
+            pc.printf("Gesture Available!\n\r");
         // Process it.
         
-			switch ( sensor.readGesture() ) {
+            switch ( sensor.readGesture() ) {
 
             case DIR_RIGHT: 
                     inf.mouvement = 2; 

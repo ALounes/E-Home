@@ -5,14 +5,14 @@
 /*************************************************************************************/
 /*************************************************************************************/
 
-	typedef struct {
-		 int  temperature_01;
-		 int  temperature_02;
-		 int  humidite;
-		 long pression;
-		 int  luminosite;
-		 int  mouvement;
-		 } Informations;
+    typedef struct {
+         int  temperature_01;
+         int  temperature_02;
+         int  humidite;
+         long pression;
+         int  luminosite;
+         int  mouvement;
+         } Informations;
 
 /*************************************************************************************/
 /*************************************************************************************/
@@ -20,8 +20,8 @@
 /*************************************************************************************/
 /*************************************************************************************/
 
-	#define PIN_TEMPERATURE_HUMIDITY_SENSOR 				P2_12
-	#define TIME_WAIT_MS_TEMPERATURE_HUMIDITY_SENSOR 	3000
+    #define PIN_TEMPERATURE_HUMIDITY_SENSOR             P2_12
+    #define TIME_WAIT_MS_TEMPERATURE_HUMIDITY_SENSOR    3000
 
 /*************************************************************************************/
 /*************************************************************************************/
@@ -29,12 +29,12 @@
 /*************************************************************************************/
 /*************************************************************************************/
 
-	#define PIN_MUX_P0 				P2_13
-	#define PIN_MUX_P1 				P0_1
-	#define PIN_MUX_P2 				P0_0
-	#define LED_ON						1
-	#define LED_OFF					0
-	#define TIME_WAIT_BLINK_LED 	500
+    #define PIN_MUX_P0              P2_13
+    #define PIN_MUX_P1              P0_1
+    #define PIN_MUX_P2              P0_0
+    #define LED_ON                  1
+    #define LED_OFF                 0
+    #define TIME_WAIT_BLINK_LED     500
 
 /*************************************************************************************/
 /*************************************************************************************/
@@ -42,9 +42,9 @@
 /*************************************************************************************/
 /*************************************************************************************/
 
-	#define PIN_PRESURE_SENSOR_SDA 			P0_27
-	#define PIN_PRESURE_SENSOR_SCL 			P0_28
-	#define TIME_WAIT_MS_PRESURE_SENSOR 	3000
+    #define PIN_PRESURE_SENSOR_SDA          P0_27
+    #define PIN_PRESURE_SENSOR_SCL          P0_28
+    #define TIME_WAIT_MS_PRESURE_SENSOR     3000
 
 /*************************************************************************************/
 /*************************************************************************************/
@@ -52,11 +52,11 @@
 /*************************************************************************************/
 /*************************************************************************************/
 
-	#define PIN_MOUVEMENT_SENSOR_SDA 				P0_27
-	#define PIN_MOUVEMENT_SENSOR_SCL 				P0_28
-	#define PIN_MOUVEMENT_SENSOR_INTERRUPTION 	P0_24
-	#define TIME_WAIT_MS_INITIALISATION_FAILURE 	20
-	#define TIME_WAIT_MS_MOUVEMENT_SENSOR 			100
+    #define PIN_MOUVEMENT_SENSOR_SDA                P0_27
+    #define PIN_MOUVEMENT_SENSOR_SCL                P0_28
+    #define PIN_MOUVEMENT_SENSOR_INTERRUPTION       P0_24
+    #define TIME_WAIT_MS_INITIALISATION_FAILURE     20
+    #define TIME_WAIT_MS_MOUVEMENT_SENSOR           100
 
 /*************************************************************************************/
 /*************************************************************************************/
@@ -64,9 +64,9 @@
 /*************************************************************************************/
 /*************************************************************************************/
 
-	#define PIN_BLE_TX 				P4_28
-	#define PIN_BLE_RX 				P4_29
-	#define TIME_MS_PERIODE_BLE 	5000  
+    #define PIN_BLE_TX              P4_28
+    #define PIN_BLE_RX              P4_29
+    #define TIME_MS_PERIODE_BLE     5000  
 
 /*************************************************************************************/
 /*************************************************************************************/
@@ -74,13 +74,13 @@
 /*************************************************************************************/
 /*************************************************************************************/
 
-	#define PWM_PERIODE_MS 		1
-	#define PIN_POTENTIOMETRE	P1_31
-	#define PIN_PWM_LED 			P2_5
-	#define PWM_VALUE_MIN 		0.05
-	#define PWM_VALUE_MAX 		0.95
-	#define PWM_LED_OFF 			0
-	#define PWM_LED_ON  			1
+    #define PWM_PERIODE_MS      1
+    #define PIN_POTENTIOMETRE   P1_31
+    #define PIN_PWM_LED         P2_5
+    #define PWM_VALUE_MIN       0.05
+    #define PWM_VALUE_MAX       0.95
+    #define PWM_LED_OFF         0
+    #define PWM_LED_ON          1
 
 
 /*************************************************************************************/
@@ -89,15 +89,15 @@
 /*************************************************************************************/
 /*************************************************************************************/ 
 
-	void thread_temperature(void const *name);
-	void thread_led(void const *name); 
-	void thread_pression(void const *name);  
-	void thread_presence(void const *name);
-	void trigger();
-	void printGesture(int gesture); 
-	int  getGesture(apds9960 *sensor); 
-	void bleCallBack(void const *name); 
-	void potAndPwm();
+    void thread_temperature(void const *name);
+    void thread_pression(void const *name);  
+    void thread_presence(void const *name);
+    void thread_led(void const *name); 
+    void trigger();
+    void printGesture(int gesture); 
+    int  getGesture(apds9960 *sensor); 
+    void bleCallBack(void const *name); 
+    void potAndPwm();
 
 /*************************************************************************************/
 /*************************************************************************************/
