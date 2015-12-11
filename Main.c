@@ -55,14 +55,7 @@ apds9960 sensor(P0_27,P0_28);
 InterruptIn interrupt(P0_24);
 DigitalOut myled(LED1);
 
-typedef struct {
-    int  temperature_01;
-    int  temperature_02;
-    int  humidite;
-    long pression;
-    int  luminosite;
-    int  mouvement;
-    } Informations;
+
 
 Informations inf = {0,0,0,0,0,0};
 
@@ -73,6 +66,7 @@ Informations inf = {0,0,0,0,0,0};
 /*************************************************************************************/
   
 int main (void) {
+
     Thread t1(thread_temperature, (void *)"Thread temperature");
     Thread t2(thread_pression   , (void *)"Thread pression");
     Thread t3(thread_presence   , (void *)"Thread presence");
@@ -91,11 +85,14 @@ int main (void) {
 /*************************************************************************************/
 
 void thread_temperature(void const *name) {
-    DHT11 capteur(DHT11_PIN);
+
+    DHT11 capteur(PIN_TEMPERATURE_HUMIDITY_SENSOR);
     int tmp;
+
     while (true) {
         printf("%s\n\r", (const char*)name);
         tmp = capteur.readData();
+
         if (tmp != DHT11::OK) {
             printf("Error! %d\r\n",tmp);
         }
@@ -104,7 +101,8 @@ void thread_temperature(void const *name) {
             inf.humidite = capteur.readHumidity();
             printf("Temperature: %d, Humidity: %d\r\n", capteur.readTemperature(), capteur.readHumidity());
         }
-        Thread::wait(WAIT_TEMPERATURE);
+
+        Thread::wait(TIME_WAIT_MS_TEMPERATURE_HUMIDITY_SENSOR);
     } 
 }
 
